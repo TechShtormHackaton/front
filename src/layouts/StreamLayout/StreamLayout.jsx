@@ -40,7 +40,7 @@ function StreamLayout() {
 
     useEffect(() => {
         // Устанавливаем прямую ссылку на стриминг видео
-        const videoURL = 'http://45.141.102.127:8000/api/v1/stream'; // URL для прямого эфира
+        const videoURL = 'http://localhost:8000/api/v1/stream'; // URL для прямого эфира
         if (videoRef.current) {
             videoRef.current.src = videoURL;
 
@@ -55,7 +55,7 @@ function StreamLayout() {
 
     // useEffect(() => {
     //     const fetchEvents = () => {
-    //         fetch('http://45.141.102.127:8000/api/v1/stream')
+    //         fetch('http://localhost:8000/api/v1/stream')
     //             .then(response => response.json())
     //             .then(data => {
     //                 setEvents(data);

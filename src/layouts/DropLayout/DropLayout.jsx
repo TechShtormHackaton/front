@@ -1,7 +1,7 @@
 import {useCallback, useState} from 'react';
 import {useDropzone} from 'react-dropzone';
 import "./DropLayout.css"
-import StreamLayout from "../StreamLayout/StreamLayout.jsx";
+import StreamLayoutNEW from "../StreamLayout/StreamLayoutNEW.jsx";
 
 
 function DropLayout() {
@@ -23,7 +23,7 @@ function DropLayout() {
         formData.append('video', file);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://45.141.102.127:8000/api/v1/video-file', true);
+        xhr.open('POST', 'http://localhost:8000/api/v1/video-file', true);
 
         xhr.upload.onprogress = (event) => {
             if (event.lengthComputable) {
@@ -76,7 +76,7 @@ function DropLayout() {
                     )}
                 </div>
             ) : (!uploading ? (
-                    <StreamLayout/>) : (<></>
+                    <StreamLayoutNEW videoFile={file}/>) : (<></>
                 )
 
             )}

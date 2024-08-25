@@ -1,84 +1,69 @@
-import { useRef, useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import "./StreamLayout.css";
 
-function StreamLayoutNEW({ videoFile }) {
+function StreamLayoutNEW({videoFile}) {
     const videoRef = useRef(null);
     const [events, setEvents] = useState({
-        total_priemy: 0,
-        total_faceoff: 0,
+        power_state: 0,
+        throws_state: 0,
+        safes_state: 0,
+        description: ""
     });
 
+    // Воспроизведение видео при монтировании компонента
     useEffect(() => {
-        if (videoFile) {
+        if (videoRef.current && videoFile) {
             const videoURL = URL.createObjectURL(videoFile);
             videoRef.current.src = videoURL;
-            videoRef.current.play();
 
-            processAndUploadVideo(videoFile);
+            // Воспроизведение видео может быть заблокировано браузером,
+            // поэтому мы просто устанавливаем источник и оставляем управление пользователю
+            videoRef.current.play().catch(error => {
+                console.error('Автовоспроизведение было заблокировано:', error);
+            });
+
+            // Очистка URL после размонтирования компонента
+            return () => {
+                URL.revokeObjectURL(videoURL);
+            };
         }
     }, [videoFile]);
 
-    const processAndUploadVideo = (videoFile) => {
-        const videoElement = videoRef.current;
-        videoElement.onloadedmetadata = () => {
-            const chunkDuration = 3; // Длительность каждого сегмента в секундах
+    // Обновление данных таблицы каждые 2 секунды
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/result');
+                if (!response.ok) {
+                    throw new Error(`Ошибка HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("data: ", data);
+                if (data.message !== "All frames have been sent") {
 
-            uploadNextSegment(videoFile, 0, chunkDuration);
+
+                    // Обновление состояния
+                    setEvents(prevEvents => ({
+                        power_state: data.results.power_state !== null ? prevEvents.power_state + 1 : prevEvents.power_state,
+                        throws_state: data.results.throws_state !== null ? prevEvents.throws_state + 1 : prevEvents.throws_state,
+                        safes_state: data.results.safes_state !== null ? prevEvents.safes_state + 1 : prevEvents.safes_state,
+                        description: data.results.description || prevEvents.description // Обновить описание только если оно не пустое
+                    }));
+                }
+            } catch (error) {
+                console.error('Ошибка при обновлении данных:', error);
+            }
         };
-    };
 
-    const uploadNextSegment = (videoFile, currentTime, chunkDuration) => {
-        const videoElement = videoRef.current;
-        const duration = videoElement.duration;
+        const interval = setInterval(fetchData, 2000);
 
-        if (currentTime < duration) {
-            captureAndSendSegment(videoFile, currentTime);
-
-            const nextTime = currentTime + chunkDuration;
-            const delay = chunkDuration * 1000;
-
-            setTimeout(() => {
-                uploadNextSegment(videoFile, nextTime, chunkDuration);
-            }, delay);
-        }
-    };
-
-    const captureAndSendSegment = (videoFile, startTime) => {
-        // Корректно определяем MIME-тип и расширение
-        const fileType = videoFile.type || 'video/webm';
-        const fileExtension = fileType.split('/')[1];
-        const segmentFileName = `${videoFile.name.split('.')[0]}_segment_${startTime}.${fileExtension}`;
-
-        const videoBlob = videoFile.slice(startTime * 1000, (startTime + 3) * 1000, fileType);
-        sendSegmentToServer(videoBlob, segmentFileName);
-    };
-
-    const sendSegmentToServer = (videoBlob, segmentFileName) => {
-        const formData = new FormData();
-        formData.append('video', videoBlob, segmentFileName);
-
-        fetch('http://45.141.102.127:8000/api/v1/video-file', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Server response:', data);
-                setEvents(prevEvents => ({
-                    total_priemy: prevEvents.total_priemy + data.total_priemy,
-                    total_faceoff: prevEvents.total_faceoff + data.total_faceoff,
-                }));
-            })
-            .catch(error => {
-                console.error('Error uploading segment:', error);
-                // Здесь можно добавить пользовательский интерфейс для отображения ошибок
-            });
-    };
+        return () => clearInterval(interval); // Очистка интервала при размонтировании компонента
+    }, []);
 
     return (
         <div className="stream-layout">
             <div className="iframe-container">
-                <video ref={videoRef} controls style={{ width: '100%' }} />
+                <video ref={videoRef} controls style={{width: '100%'}}/>
             </div>
             <div className="table-container">
                 <h2>Онлайн события</h2>
@@ -86,11 +71,19 @@ function StreamLayoutNEW({ videoFile }) {
                     <tbody>
                     <tr>
                         <td>Силовые</td>
-                        <td>{events.total_priemy}</td>
+                        <td>{events.power_state}</td>
                     </tr>
                     <tr>
                         <td>Вбросы</td>
-                        <td>{events.total_faceoff}</td>
+                        <td>{events.throws_state}</td>
+                    </tr>
+                    <tr>
+                        <td>Спасение вратаря</td>
+                        <td>{events.safes_state}</td>
+                    </tr>
+                    <tr>
+                        <td>Описание событий</td>
+                        <td>{events.description}</td>
                     </tr>
                     </tbody>
                 </table>
