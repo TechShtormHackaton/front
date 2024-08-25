@@ -1,0 +1,86 @@
+.form-container{
+    background-image: url('/public/background.png');
+}
+.drop-layout{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100vh;
+}
+.dropzone-container {
+    width: 100%;
+    max-width: 400px;
+    height: 200px;
+    border: 2px dashed #cccccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: #fff;
+    border-radius: 10px;
+
+}
+
+.drag-drop {
+    font-size: 16px;
+    color: #666;
+}
+
+.uploading-container {
+    width: 100%;
+    text-align: center;
+}
+
+.progress-bar {
+    width: 100%;
+    background: #e0e0e0;
+    height: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: #4caf50;
+}
+
+/*.video-and-table {*/
+/*    display: flex;*/
+/*    gap: 20px;*/
+/*    width: 100%;*/
+/*    max-width: 800px;*/
+/*}*/
+
+/*.video-container {*/
+/*    flex: 2;*/
+/*}*/
+
+/*.table-container {*/
+/*    flex: 1;*/
+/*    background: #fff;*/
+/*    border-radius: 10px;*/
+/*    padding: 10px;*/
+/*}*/
+
+/*video {*/
+/*    width: 100%;*/
+/*    border-radius: 10px;*/
+/*}*/
+
+/*table {*/
+/*    width: 100%;*/
+/*    border-collapse: collapse;*/
+/*    margin-top: 10px;*/
+/*}*/
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #f8f8f8;
+}

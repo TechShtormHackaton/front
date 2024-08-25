@@ -1,0 +1,47 @@
+.stream-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+.iframe-container {
+    flex: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.iframe-container iframe {
+    width: 95%;
+    height: 95%;
+    border-radius: 30px;
+    border: none;
+}
+
+.table-container {
+    flex: 1;
+    background-color: rgba(0, 10, 20, 0.8); /* Полупрозрачный фон, как на изображении */
+    padding: 20px;
+    color: white;
+    font-size: x-large;
+    border-radius: 100px;
+    margin-top: 20px;
+}
+
+.table-container h2 {
+    margin-bottom: 20px;
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-container td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.table-container td:last-child {
+    border-bottom: none;
+}
